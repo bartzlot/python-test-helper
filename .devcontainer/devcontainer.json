@@ -1,0 +1,35 @@
+{
+    "name": "python",
+    "build": {
+        "dockerfile": "./Dockerfile",
+        "args": {
+            "VARIANT": "3.11-bullseye"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "donjayamanne.python-extension-pack",
+                "streetsidesoftware.code-spell-checker",
+                "eamodio.gitlens",
+                "yzhang.markdown-all-in-one",
+                "davidanson.vscode-markdownlint",
+                "redhat.vscode-yaml",
+                "littlefoxteam.vscode-python-test-adapter",
+                "tamasfe.even-better-toml"
+            ],
+            "settings": {
+                "python.linting.enabled": true,
+                "python.linting.banditEnabled": true,
+                "python.linting.flake8Enabled": true,
+                "python.linting.mypyEnabled": true,
+                "python.linting.pycodestyleEnabled": true,
+                "python.linting.pydocstyleEnabled": true,
+                "python.linting.pylintEnabled": true,
+                "python.formatting.provider": "yapf",
+                "python.formatting.yapfArgs": ["--style={based_on_style: google}"]
+            }
+        }
+    },
+    "remoteUser": "root"
+}
