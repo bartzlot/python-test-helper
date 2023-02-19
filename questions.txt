@@ -1,0 +1,3 @@
+Ile to 2+2: ;3;4;1;5;4
+Jaka jest wartość liczby Pi: ;3.14;2;4.5;1.73;3.14
+Czy słoń to ssak: ;nie;tak;nie wiem;moze;tak
