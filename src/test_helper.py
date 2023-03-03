@@ -1,57 +1,65 @@
 #! /usr/bin/env python
 """Dummy docstring."""
-from test_modules import checking_answers, picking_random_elements, saving_into_file, adding_new_questions
+from test_modules import (
+    adding_new_questions,
+    checking_answers,
+    curses,
+    main_menu,
+    picking_random_elements,
+    reading_from_file,
+    reading_points_from_file,
+    saving_into_file,
+    saving_points_to_file,
+)
 
-questions = ["Ile to 2+2: ", "Jaka jest wartość liczby Pi: ", "Czy słoń to ssak: "]
-answers = [
-    ["3", "4", "1", "5"],
-    ["3.14", "2", "4.5", "1.73"],
-    ["nie", "tak", "nie wiem", "moze"],
-]
-correctAnswers = ["4", "3.14", "tak"]
-PROGRAM_RUNNING = True
-saving_into_file(questions, answers, correctAnswers)
-adding_new_questions(questions, answers, correctAnswers)
-
+QUESTIONS = []
+ANSWERS = []
+CORRECT_ANSWERS = []
+points = []
+# stdscr = curses.initscr()
+# curses.wrapper(main_menu)
+reading_from_file(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
+# adding_new_questions(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
+# saving_into_file(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
 
 # todo - while PROGRAM_RUNNING is True:
 while True:
     try:
-        questionsAmount = int(input("Ile pytań ma zawierać quiz: "))
-        if questionsAmount > len(questions) or questionsAmount <= 0:
-            print("Podaj liczbę z zakresu 1-{}".format(len(questions)))
+        questions_amount = int(input("Ile pytań ma zawierać quiz: "))
+        if questions_amount > len(QUESTIONS) or questions_amount <= 0:
+            print("Podaj liczbę z zakresu 1-{}".format(len(QUESTIONS)))
             continue
         else:
             break
     except ValueError:
         print("Proszę podać liczbę!")
         continue
-randomQuestions = picking_random_elements(questions, questionsAmount)
+randomQuestions = picking_random_elements(QUESTIONS, questions_amount)
 randomAnswers = []
 for i in randomQuestions:
-    randomAnswers.append(picking_random_elements(answers[i], len(answers[i])))
-print(randomAnswers)
-print(randomQuestions)
+    randomAnswers.append(picking_random_elements(ANSWERS[i], len(ANSWERS[i])))
 POINTS = 0
 ITR = 0
 for i in randomQuestions:
     print("\n")
-    print(questions[i])
+    print(QUESTIONS[i])
     ABCD = 65
     ANSWER = ""
     for j in randomAnswers[ITR]:
         letter = chr(ABCD)
-        if correctAnswers[randomQuestions[ITR]] == answers[i][j]:
+        if CORRECT_ANSWERS[randomQuestions[ITR]] == ANSWERS[i][j]:
             CORRECT_ANSWER = letter
         ABCD += 1
-        print("{}: {}".format(letter, answers[i][j]), end=" | ")
+        print("{}: {}".format(letter, ANSWERS[i][j]), end=" | ")
     print("\n")
     ITR += 1
     ANSWER = str(input("Podaj odpowiedź: "))
     if checking_answers(ANSWER, CORRECT_ANSWER) is True:
         POINTS += 1
+points.append("{}/{}".format(POINTS, questions_amount))
 print(
     "Twój wynik: {}/{} - {}%".format(
-        POINTS, questionsAmount, round((POINTS / questionsAmount) * 100, 2)
+        POINTS, questions_amount, round((POINTS / questions_amount) * 100, 2)
     )
 )
+saving_points_to_file(points, 10)
