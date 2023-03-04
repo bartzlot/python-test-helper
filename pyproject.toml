@@ -9,8 +9,12 @@ packages = [{include = "python_test_helper", from = "src"}]
 
 [tool.poetry.dependencies]
 python = "^3.11"
+click = "^8.1.3"
 
 
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.scripts]
+python-test-helper ="python_test_helper.commands:cli"

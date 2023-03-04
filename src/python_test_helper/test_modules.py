@@ -57,14 +57,16 @@ def reading_from_file(questions: list, answers: list, correct_answers: list):
         f = open("questions.txt", "r")
 
     except IOError:
-        print("Nie mozna otworzyć pliku, sprawdź czy znajduje się w odpowiedniej ściezce...")
+        print(
+            "Nie mozna otworzyć pliku, sprawdź czy znajduje się w odpowiedniej ściezce..."
+        )
     line_container = []
     try:
         for line in f:
             line_container = line.split(";")
             questions.append(line_container[0])
-            answers.append(line_container[1:len(line_container)-1])
-            correct_answers.append(line_container[len(line_container)-1].strip())
+            answers.append(line_container[1 : len(line_container) - 1])
+            correct_answers.append(line_container[len(line_container) - 1].strip())
     except EOFError:
         print("Plik jest pusty, nie mozna odczytać pytań...")
     except IndexError:
@@ -96,7 +98,13 @@ def adding_new_questions(questions: list, answers: list, correct_answers: list):
     itr = 1
     options = []
     while True:
-        single_answer = str(input("Podaj {} odpowiedź lub wpisz [N], aby zakończyć dodawanie: ".format(itr)))
+        single_answer = str(
+            input(
+                "Podaj {} odpowiedź lub wpisz [N], aby zakończyć dodawanie: ".format(
+                    itr
+                )
+            )
+        )
         if single_answer == "":
             print("Musisz wymyślić jakąś odpowiedź...")
             continue
@@ -107,12 +115,12 @@ def adding_new_questions(questions: list, answers: list, correct_answers: list):
             temp_answers.append(single_answer)
 
     for i in range(len(temp_answers)):
-        options.append(chr(65+i))
+        options.append(chr(65 + i))
     while True:
         print("Wskaz poprawną odpowiedź spośród - ", end="")
         for itr, i in enumerate(options):
-            print("{}: {}|".format(i, temp_answers[itr]), end = "")
-        print(": ", end = "")
+            print("{}: {}|".format(i, temp_answers[itr]), end="")
+        print(": ", end="")
         temp_correct_answer = str(input())
         if temp_correct_answer.upper() not in options:
             print("Musisz wskazać, którąś z podanych...")
@@ -126,20 +134,22 @@ def adding_new_questions(questions: list, answers: list, correct_answers: list):
     answers.append(temp_answers)
     correct_answers.append(temp_correct_answer)
 
+
 def saving_points_to_file(points: list, records_amount: int):
-    with open('points.txt', 'w') as f:
+    with open("points.txt", "w") as f:
         for itr, i in enumerate(points):
-            f.write(i + '\n')
+            f.write(i + "\n")
             if itr > records_amount:
                 break
 
 
-
 def reading_points_from_file(points: list, records_amount: int):
     try:
-        f = open('points.txt', 'r')
+        f = open("points.txt", "r")
     except IOError:
-        print("Nie mozna otworzyć pliku, sprawdź czy znajduje się w odpowiedniej ściezce...")
+        print(
+            "Nie mozna otworzyć pliku, sprawdź czy znajduje się w odpowiedniej ściezce..."
+        )
     try:
         for line in f:
             points.append(line.strip())
@@ -152,14 +162,16 @@ def reading_points_from_file(points: list, records_amount: int):
 
 
 menu_options = ["Rozpocznij quiz", "Ostatnie wyniki", "Zamknij program"]
+
+
 def main_menu(stdscr):
     attributes = {}
     curses.initscr()
     curses.start_color()
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLACK)
     curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_WHITE)
-    attributes['normal'] = curses.color_pair(1)
-    attributes['highlighted'] = curses.color_pair(2)
+    attributes["normal"] = curses.color_pair(1)
+    attributes["highlighted"] = curses.color_pair(2)
     c = 0
     option = 0
     while c != 10:
@@ -170,12 +182,12 @@ def main_menu(stdscr):
                 attr = attributes["highlighted"]
             else:
                 attr = attributes["normal"]
-            stdscr.addstr("{}".format(i+1))
+            stdscr.addstr("{}".format(i + 1))
             stdscr.addstr(menu_options[i] + "\n", attr)
         c = stdscr.getch()
-        if (c == curses.KEY_UP and option > 0):
+        if c == curses.KEY_UP and option > 0:
             option -= 1
-        elif (c == curses.KEY_DOWN and option < len(menu_options)-1):
+        elif c == curses.KEY_DOWN and option < len(menu_options) - 1:
             option += 1
     stdscr.addstr("Wybrałeś {}".format(menu_options[option]))
     stdscr.getch()
