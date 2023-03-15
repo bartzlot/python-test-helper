@@ -1,6 +1,7 @@
 """Dummy docstring."""
 import curses
 import random
+import json
 
 
 def picking_random_elements(elements: list, list_amount: int):
@@ -36,13 +37,16 @@ def saving_into_file(questions: list, answers: list, correct_answers: list):
     answers: list of answers
     correct_answers: list of correct answers associated with questions
     """
-    with open("questions.txt", "w") as f:
-        for i in range(len(questions)):
-            f.write(
-                "{};{};{}\n".format(
-                    questions[i], ";".join(answers[i]), correct_answers[i]
-                )
-            )
+    dump_list = []
+    with open("questions.json", "w") as f:
+        for itr, i in enumerate(questions):
+            dump_dict = {
+                'question': i,
+                'answers': answers[itr],
+                'correctAnswer': correct_answers[itr]
+            }
+            dump_list.append(dump_dict)
+        json.dump(dump_list, f, indent=2)
 
 
 def reading_from_file(questions: list, answers: list, correct_answers: list):
@@ -54,19 +58,18 @@ def reading_from_file(questions: list, answers: list, correct_answers: list):
         correct_answers (list): correct answers list
     """
     try:
-        f = open("questions.txt", "r")
+        with open("questions.json", "r") as f:
+            questions_data = json.load(f)
 
     except IOError:
         print(
             "Nie mozna otworzyć pliku, sprawdź czy znajduje się w odpowiedniej ściezce..."
         )
-    line_container = []
     try:
-        for line in f:
-            line_container = line.split(";")
-            questions.append(line_container[0])
-            answers.append(line_container[1 : len(line_container) - 1])
-            correct_answers.append(line_container[len(line_container) - 1].strip())
+        for i in questions_data:
+            questions.append(i['question'])
+            answers.append(i['answers'])
+            correct_answers.append(i['correctAnswer'])
     except EOFError:
         print("Plik jest pusty, nie mozna odczytać pytań...")
     except IndexError:
@@ -165,6 +168,7 @@ menu_options = ["Rozpocznij quiz", "Ostatnie wyniki", "Zamknij program"]
 
 
 def main_menu(stdscr):
+
     attributes = {}
     curses.initscr()
     curses.start_color()
@@ -191,3 +195,40 @@ def main_menu(stdscr):
             option += 1
     stdscr.addstr("Wybrałeś {}".format(menu_options[option]))
     stdscr.getch()
+
+
+def quiz_game(questions_amount: int):
+    QUESTIONS = []
+    ANSWERS = []
+    CORRECT_ANSWERS = []
+    points = []
+    reading_from_file(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
+    randomQuestions = picking_random_elements(QUESTIONS, questions_amount)
+    randomAnswers = []
+    for i in randomQuestions:
+        randomAnswers.append(picking_random_elements(ANSWERS[i], len(ANSWERS[i])))
+    POINTS = 0
+    ITR = 0
+    for i in randomQuestions:
+        print("\n")
+        print(QUESTIONS[i])
+        ABCD = 65
+        ANSWER = ""
+        for j in randomAnswers[ITR]:
+            letter = chr(ABCD)
+            if CORRECT_ANSWERS[randomQuestions[ITR]] == ANSWERS[i][j]:
+                CORRECT_ANSWER = letter
+            ABCD += 1
+            print("{}: {}".format(letter, ANSWERS[i][j]), end=" | ")
+        print("\n")
+        ITR += 1
+        ANSWER = str(input("Podaj odpowiedź: "))
+        if checking_answers(ANSWER, CORRECT_ANSWER) is True:
+            POINTS += 1
+    points.append("{}/{}".format(POINTS, questions_amount))
+    print(
+        "Twój wynik: {}/{} - {}%".format(
+            POINTS, questions_amount, round((POINTS / questions_amount) * 100, 2)
+        )
+    )
+    saving_points_to_file(points, 10)

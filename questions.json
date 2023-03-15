@@ -1,0 +1,12 @@
+[
+  {
+    "question": "Ile to 2+2: ",
+    "answers": [
+      "3",
+      "4",
+      "1",
+      "5"
+    ],
+    "correctAnswer": "4"
+  }
+]
