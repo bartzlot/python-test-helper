@@ -8,5 +8,18 @@
       "5"
     ],
     "correctAnswer": "4"
+  },
+  {
+    "question": "Czy siedze w pociagu?",
+    "answers": [
+      "tak",
+      "nie",
+      "nwm",
+      "moze"
+    ],
+    "correctAnswer": [
+      "nwm",
+      "moze"
+    ]
   }
 ]

@@ -15,18 +15,16 @@ def picking_random_elements(elements: list, list_amount: int):
     return random_elements
 
 
-def checking_answers(answer: str, correct_answer: str):
+def checking_answers(answers: list, correct_answers: list):
     """Checks if given answer is correct with const (works for upper and lower
     letters)
         Args:
         answer: given answer
         correct_answer: correct uppercase answer
     """
-    if answer.upper() == correct_answer:
-        print("POPRAWNA ODPOWIEDŹ")
+    if set(answers) == set(correct_answers):
         return True
     else:
-        print("NIEPOPRAWNA ODPOWIEDŹ")
         return False
 
 
@@ -123,20 +121,27 @@ def adding_new_questions(questions: list, answers: list, correct_answers: list):
         print("Wskaz poprawną odpowiedź spośród - ", end="")
         for itr, i in enumerate(options):
             print("{}: {}|".format(i, temp_answers[itr]), end="")
-        print(": ", end="")
-        temp_correct_answer = str(input())
-        if temp_correct_answer.upper() not in options:
-            print("Musisz wskazać, którąś z podanych...")
-            continue
-        else:
-            temp_correct_answer = temp_answers[
-                options.index(temp_correct_answer.upper())
-            ]
-            break
-    questions.append(question)
-    answers.append(temp_answers)
-    correct_answers.append(temp_correct_answer)
-
+        print(": ")
+        temp_correct_answer_collector = []
+        while True:
+            temp_correct_answer = str(input("Wybierz poprawne odpowiedzi spośród podanych:"))
+            if temp_correct_answer.upper() not in options or temp_correct_answer.upper() in temp_correct_answer_collector:
+                print("Musisz wskazać, którąś z podanych lub juz odpowiedz została oznaczona...")
+                continue
+            else:
+                temp_correct_answer = temp_answers[
+                    options.index(temp_correct_answer.upper())]
+                temp_correct_answer_collector.append(temp_correct_answer)
+                print(temp_correct_answer_collector)
+                continue_input = str(input("Jezeli chcesz zakończyć oznaczanie poprawnych odpowiedzi wpisz[N]:"))
+                if continue_input.upper() == "N":
+                    break
+                else:
+                    continue
+        questions.append(question)
+        answers.append(temp_answers)
+        correct_answers.append(temp_correct_answer_collector)
+        break
 
 def saving_points_to_file(points: list, records_amount: int):
     with open("points.txt", "w") as f:
@@ -197,12 +202,8 @@ def main_menu(stdscr):
     stdscr.getch()
 
 
-def quiz_game(questions_amount: int):
-    QUESTIONS = []
-    ANSWERS = []
-    CORRECT_ANSWERS = []
+def quiz_game(questions_amount: int, QUESTIONS : list, ANSWERS: list, CORRECT_ANSWERS: list):
     points = []
-    reading_from_file(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
     randomQuestions = picking_random_elements(QUESTIONS, questions_amount)
     randomAnswers = []
     for i in randomQuestions:
@@ -214,17 +215,45 @@ def quiz_game(questions_amount: int):
         print(QUESTIONS[i])
         ABCD = 65
         ANSWER = ""
+        CORRECT_ANSWER = []
         for j in randomAnswers[ITR]:
             letter = chr(ABCD)
-            if CORRECT_ANSWERS[randomQuestions[ITR]] == ANSWERS[i][j]:
-                CORRECT_ANSWER = letter
+            if len(CORRECT_ANSWERS[randomQuestions[ITR]]) > 1:
+                for k in CORRECT_ANSWERS[randomQuestions[ITR]]:
+                    if k == ANSWERS[i][j]:
+                        CORRECT_ANSWER.append(letter)
+            else:
+                if CORRECT_ANSWERS[randomQuestions[ITR]] == ANSWERS[i][j]:
+                    CORRECT_ANSWER.append(letter)
             ABCD += 1
             print("{}: {}".format(letter, ANSWERS[i][j]), end=" | ")
         print("\n")
         ITR += 1
-        ANSWER = str(input("Podaj odpowiedź: "))
-        if checking_answers(ANSWER, CORRECT_ANSWER) is True:
-            POINTS += 1
+        ALREADY_ANSWERED = []
+        while True:
+            ANSWER = str(input("Podaj odpowiedź, jezeli wszystkie odpowiedzi zostaly wprowadzone lub chcesz przerwać quiz wpisz [N]: "))
+            if ANSWER == '' or len(ANSWER) > 1 or (ANSWER.upper() in ALREADY_ANSWERED):
+                print("Musisz podać odpowiedź w poprawnym formacie i nie powtarzać odpowiedzi...")
+            elif ANSWER.upper() == 'N':
+                if checking_answers(ALREADY_ANSWERED, CORRECT_ANSWER) == True:
+                    POINTS += 1
+                    break
+                else:
+                    break
+            elif len(ALREADY_ANSWERED) == ABCD-65:
+                print("Podałeś juz wszystkie odpowiedzi...")
+                break
+            elif ord(ANSWER.upper()) > (ABCD-1):
+                print("Podaj odpowiedź z zakresu A - {}".format(letter))
+                print(ANSWER)
+                continue
+            else:
+                ALREADY_ANSWERED.append(ANSWER.upper())
+                print(ALREADY_ANSWERED)
+                print(CORRECT_ANSWER)
+
+
+
     points.append("{}/{}".format(POINTS, questions_amount))
     print(
         "Twój wynik: {}/{} - {}%".format(

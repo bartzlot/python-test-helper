@@ -1,25 +1,30 @@
+"""Dummy docstring"""
 import click
-import pkg_resources
-from .test_modules import (
-    adding_new_questions,
-    checking_answers,
-    curses,
-    main_menu,
-    picking_random_elements,
-    reading_from_file,
-    reading_points_from_file,
-    saving_into_file,
-    saving_points_to_file,
-    quiz_game,)
+from .test_modules import quiz_game
+
 
 @click.group()
 def cli():
-    pass
+    """dummy doc"""
+
+
+@cli.command()
+@click.option('--path', default='path')
+def create_test(path):
+    """dummy doc"""
+    print(path)
 
 
 @cli.command()
 @click.argument('questions_amount', type=int)
-def start(questions_amount):
+@click.argument('file_name',
+                type=click.Path(exists=True,
+                                dir_okay=True,
+                                readable=True,
+                                writable=False,
+                                executable=False))
+def start(file_name, questions_amount):
+    """dummy doc"""
     quiz_game(questions_amount)
 
 
