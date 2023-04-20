@@ -2,6 +2,7 @@
 import curses
 import random
 import json
+import os
 
 
 def picking_random_elements(elements: list, list_amount: int):
@@ -76,6 +77,18 @@ def reading_from_file(questions: list, answers: list, correct_answers: list):
         print("[pytanie] ;[odp1] ;[odp2];[odp3] ;[odp-N] ;[poprawna odp]")
 
 
+def define_correctness(is_correct: bool):
+    while True:
+            c = str(input("Czy odpowiedź jest poprawna[T/N]: "))
+            if c.upper() == 'T':
+                return True
+            elif c.upper() == 'N':
+                return False
+            else:
+                print('Musisz wskazać poprawność odpowiedzi...')
+                continue
+
+
 def adding_new_questions(questions: list, answers: list, correct_answers: list):
     """Function adding new questions from user while whole program is running
 
@@ -85,19 +98,17 @@ def adding_new_questions(questions: list, answers: list, correct_answers: list):
         correct_answers (list): list of correct answers
     """
     while True:
-        pick = str(input("Jezeli nie chcesz wprowadzać nowego pytania wpisz [N]: "))
-        if pick == "N" or pick.upper() == "N":
+        question = str(input("Podaj pytanie jakie chcesz dodać lub wpisz [N], aby zakończyć wprowadzanie: "))
+        if question.upper() == "N":
             break
-        else:
-            question = str(input("Podaj pytanie jakie chcesz dodać: "))
-        if question == "" or question.isnumeric() is True:
+        elif question == "" or question.isnumeric() is True:
             print("Musisz podać pytanie...\n")
             continue
         else:
             break
     temp_answers = []
     itr = 1
-    options = []
+    # options = []
     while True:
         single_answer = str(
             input(
@@ -113,35 +124,42 @@ def adding_new_questions(questions: list, answers: list, correct_answers: list):
             break
         else:
             itr += 1
-            temp_answers.append(single_answer)
+            packed_answer = {}
+            is_correct = None
+            is_correct = define_correctness(is_correct)
+            packed_answer = dict(answer=single_answer, state=is_correct)
+            temp_answers.append(packed_answer)
+        # print(temp_answers)
 
-    for i in range(len(temp_answers)):
-        options.append(chr(65 + i))
-    while True:
-        print("Wskaz poprawną odpowiedź spośród - ", end="")
-        for itr, i in enumerate(options):
-            print("{}: {}|".format(i, temp_answers[itr]), end="")
-        print(": ")
-        temp_correct_answer_collector = []
-        while True:
-            temp_correct_answer = str(input("Wybierz poprawne odpowiedzi spośród podanych:"))
-            if temp_correct_answer.upper() not in options or temp_correct_answer.upper() in temp_correct_answer_collector:
-                print("Musisz wskazać, którąś z podanych lub juz odpowiedz została oznaczona...")
-                continue
-            else:
-                temp_correct_answer = temp_answers[
-                    options.index(temp_correct_answer.upper())]
-                temp_correct_answer_collector.append(temp_correct_answer)
-                print(temp_correct_answer_collector)
-                continue_input = str(input("Jezeli chcesz zakończyć oznaczanie poprawnych odpowiedzi wpisz[N]:"))
-                if continue_input.upper() == "N":
-                    break
-                else:
-                    continue
-        questions.append(question)
-        answers.append(temp_answers)
-        correct_answers.append(temp_correct_answer_collector)
-        break
+
+
+    # for i in range(len(temp_answers)):
+    #     options.append(chr(65 + i))
+    # while True:
+    #     print("Wskaz poprawną odpowiedź spośród - ", end="")
+    #     for itr, i in enumerate(options):
+    #         print("{}: {}|".format(i, temp_answers[itr]), end="")
+    #     print(": ")
+    #     temp_correct_answer_collector = []
+    #     while True:
+    #         temp_correct_answer = str(input("Wybierz poprawne odpowiedzi spośród podanych:"))
+    #         if temp_correct_answer.upper() not in options or temp_correct_answer.upper() in temp_correct_answer_collector:
+    #             print("Musisz wskazać, którąś z podanych lub juz odpowiedz została oznaczona...")
+    #             continue
+    #         else:
+    #             temp_correct_answer = temp_answers[
+    #                 options.index(temp_correct_answer.upper())]
+    #             temp_correct_answer_collector.append(temp_correct_answer)
+    #             print(temp_correct_answer_collector)
+    #             continue_input = str(input("Jezeli chcesz zakończyć oznaczanie poprawnych odpowiedzi wpisz[N]:"))
+    #             if continue_input.upper() == "N":
+    #                 break
+    #             else:
+    #                 continue
+    questions.append(question)
+    answers.append(temp_answers)
+    # correct_answers.append(temp_answers)
+    print(answers)
 
 def saving_points_to_file(points: list, records_amount: int):
     with open("points.txt", "w") as f:
@@ -251,9 +269,6 @@ def quiz_game(questions_amount: int, QUESTIONS : list, ANSWERS: list, CORRECT_AN
                 ALREADY_ANSWERED.append(ANSWER.upper())
                 print(ALREADY_ANSWERED)
                 print(CORRECT_ANSWER)
-
-
-
     points.append("{}/{}".format(POINTS, questions_amount))
     print(
         "Twój wynik: {}/{} - {}%".format(
@@ -261,3 +276,10 @@ def quiz_game(questions_amount: int, QUESTIONS : list, ANSWERS: list, CORRECT_AN
         )
     )
     saving_points_to_file(points, 10)
+
+
+def create_new_test(path: str):
+    if os.path.exists(path) == True:
+        print('istnieje')
+    else:
+        print('nie istnieje')

@@ -13,11 +13,13 @@ from test_modules import (
     saving_into_file,
     saving_points_to_file,
     quiz_game,
+    create_new_test,
 )
 QUESTIONS = []
 ANSWERS = []
 CORRECT_ANSWERS = []
-reading_from_file(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
-# adding_new_questions(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
+# reading_from_file(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
+adding_new_questions(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
 # saving_into_file(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
-quiz_game(1, QUESTIONS, ANSWERS, CORRECT_ANSWERS)
+# quiz_game(1, QUESTIONS, ANSWERS, CORRECT_ANSWERS)
+# create_new_test("questionss.json")
