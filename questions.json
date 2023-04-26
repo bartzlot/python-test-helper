@@ -1,25 +1,36 @@
 [
   {
-    "question": "Ile to 2+2: ",
+    "question": "czy jureczko?",
     "answers": [
-      "3",
-      "4",
-      "1",
-      "5"
-    ],
-    "correctAnswer": "4"
+      {
+        "answer": "tak",
+        "state": true
+      },
+      {
+        "answer": "nie",
+        "state": false
+      },
+      {
+        "answer": "moze nie",
+        "state": false
+      }
+    ]
   },
   {
-    "question": "Czy siedze w pociagu?",
+    "question": "czy to jest wyklad?",
     "answers": [
-      "tak",
-      "nie",
-      "nwm",
-      "moze"
-    ],
-    "correctAnswer": [
-      "nwm",
-      "moze"
+      {
+        "answer": "moze",
+        "state": false
+      },
+      {
+        "answer": "tak",
+        "state": true
+      },
+      {
+        "answer": "nie",
+        "state": false
+      }
     ]
   }
 ]

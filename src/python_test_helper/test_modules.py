@@ -23,13 +23,17 @@ def checking_answers(answers: list, correct_answers: list):
         answer: given answer
         correct_answer: correct uppercase answer
     """
-    if set(answers) == set(correct_answers):
+    temp_check = []
+    for index, i in enumerate(correct_answers):
+        if i['state']:
+            temp_check.append(index)
+    if set(answers) == set(temp_check):
         return True
     else:
         return False
 
 
-def saving_into_file(questions: list, answers: list, correct_answers: list):
+def saving_into_file(questions: list, answers: list):
     """Save elements from 3 given lists into file with ';' suffix after values
     Args:
     questions: list of questions
@@ -42,13 +46,12 @@ def saving_into_file(questions: list, answers: list, correct_answers: list):
             dump_dict = {
                 'question': i,
                 'answers': answers[itr],
-                'correctAnswer': correct_answers[itr]
             }
             dump_list.append(dump_dict)
         json.dump(dump_list, f, indent=2)
 
 
-def reading_from_file(questions: list, answers: list, correct_answers: list):
+def reading_from_file(questions: list, answers: list):
     """Reading elements from file 'questions.txt'
 
     Args:
@@ -68,7 +71,6 @@ def reading_from_file(questions: list, answers: list, correct_answers: list):
         for i in questions_data:
             questions.append(i['question'])
             answers.append(i['answers'])
-            correct_answers.append(i['correctAnswer'])
     except EOFError:
         print("Plik jest pusty, nie mozna odczytać pytań...")
     except IndexError:
@@ -78,6 +80,7 @@ def reading_from_file(questions: list, answers: list, correct_answers: list):
 
 
 def define_correctness(is_correct: bool):
+    """dummy doc"""
     while True:
             c = str(input("Czy odpowiedź jest poprawna[T/N]: "))
             if c.upper() == 'T':
@@ -89,13 +92,12 @@ def define_correctness(is_correct: bool):
                 continue
 
 
-def adding_new_questions(questions: list, answers: list, correct_answers: list):
+def adding_new_questions(questions: list, answers: list):
     """Function adding new questions from user while whole program is running
 
     Args:
         questions (list): list of questions
-        answers (list): list of answers
-        correct_answers (list): list of correct answers
+        answers (list): list of answers with correctness state
     """
     while True:
         question = str(input("Podaj pytanie jakie chcesz dodać lub wpisz [N], aby zakończyć wprowadzanie: "))
@@ -129,36 +131,8 @@ def adding_new_questions(questions: list, answers: list, correct_answers: list):
             is_correct = define_correctness(is_correct)
             packed_answer = dict(answer=single_answer, state=is_correct)
             temp_answers.append(packed_answer)
-        # print(temp_answers)
-
-
-
-    # for i in range(len(temp_answers)):
-    #     options.append(chr(65 + i))
-    # while True:
-    #     print("Wskaz poprawną odpowiedź spośród - ", end="")
-    #     for itr, i in enumerate(options):
-    #         print("{}: {}|".format(i, temp_answers[itr]), end="")
-    #     print(": ")
-    #     temp_correct_answer_collector = []
-    #     while True:
-    #         temp_correct_answer = str(input("Wybierz poprawne odpowiedzi spośród podanych:"))
-    #         if temp_correct_answer.upper() not in options or temp_correct_answer.upper() in temp_correct_answer_collector:
-    #             print("Musisz wskazać, którąś z podanych lub juz odpowiedz została oznaczona...")
-    #             continue
-    #         else:
-    #             temp_correct_answer = temp_answers[
-    #                 options.index(temp_correct_answer.upper())]
-    #             temp_correct_answer_collector.append(temp_correct_answer)
-    #             print(temp_correct_answer_collector)
-    #             continue_input = str(input("Jezeli chcesz zakończyć oznaczanie poprawnych odpowiedzi wpisz[N]:"))
-    #             if continue_input.upper() == "N":
-    #                 break
-    #             else:
-    #                 continue
     questions.append(question)
     answers.append(temp_answers)
-    # correct_answers.append(temp_answers)
     print(answers)
 
 def saving_points_to_file(points: list, records_amount: int):
@@ -220,31 +194,30 @@ def main_menu(stdscr):
     stdscr.getch()
 
 
-def quiz_game(questions_amount: int, QUESTIONS : list, ANSWERS: list, CORRECT_ANSWERS: list):
+def quiz_game(questions_amount: int, QUESTIONS: list, ANSWERS: list):
     points = []
     randomQuestions = picking_random_elements(QUESTIONS, questions_amount)
     randomAnswers = []
+    picked_answers = []
     for i in randomQuestions:
         randomAnswers.append(picking_random_elements(ANSWERS[i], len(ANSWERS[i])))
     POINTS = 0
     ITR = 0
     for i in randomQuestions:
-        print("\n")
-        print(QUESTIONS[i])
-        ABCD = 65
-        ANSWER = ""
-        CORRECT_ANSWER = []
+        temp_picked_answers = []
         for j in randomAnswers[ITR]:
-            letter = chr(ABCD)
-            if len(CORRECT_ANSWERS[randomQuestions[ITR]]) > 1:
-                for k in CORRECT_ANSWERS[randomQuestions[ITR]]:
-                    if k == ANSWERS[i][j]:
-                        CORRECT_ANSWER.append(letter)
-            else:
-                if CORRECT_ANSWERS[randomQuestions[ITR]] == ANSWERS[i][j]:
-                    CORRECT_ANSWER.append(letter)
+            temp_picked_answers.append(ANSWERS[i][j])
+        ITR += 1
+        picked_answers.append(temp_picked_answers)
+    print("\n")
+    ITR = 0
+    ABCD = 65
+    ANSWER = ""
+    for j in picked_answers:
+        print(QUESTIONS[randomQuestions[ITR]])
+        for k in j:
+            print("{}: {}".format(chr(ABCD), k['answer']), end=" | ")
             ABCD += 1
-            print("{}: {}".format(letter, ANSWERS[i][j]), end=" | ")
         print("\n")
         ITR += 1
         ALREADY_ANSWERED = []
@@ -253,7 +226,7 @@ def quiz_game(questions_amount: int, QUESTIONS : list, ANSWERS: list, CORRECT_AN
             if ANSWER == '' or len(ANSWER) > 1 or (ANSWER.upper() in ALREADY_ANSWERED):
                 print("Musisz podać odpowiedź w poprawnym formacie i nie powtarzać odpowiedzi...")
             elif ANSWER.upper() == 'N':
-                if checking_answers(ALREADY_ANSWERED, CORRECT_ANSWER) == True:
+                if checking_answers(ALREADY_ANSWERED, picked_answers[ITR-1]) is True:
                     POINTS += 1
                     break
                 else:
@@ -262,19 +235,16 @@ def quiz_game(questions_amount: int, QUESTIONS : list, ANSWERS: list, CORRECT_AN
                 print("Podałeś juz wszystkie odpowiedzi...")
                 break
             elif ord(ANSWER.upper()) > (ABCD-1):
-                print("Podaj odpowiedź z zakresu A - {}".format(letter))
-                print(ANSWER)
-                continue
+                print("Podaj odpowiedź z zakresu A - {}".format(chr(ABCD-1)))
             else:
-                ALREADY_ANSWERED.append(ANSWER.upper())
-                print(ALREADY_ANSWERED)
-                print(CORRECT_ANSWER)
-    points.append("{}/{}".format(POINTS, questions_amount))
+                ALREADY_ANSWERED.append(ord(ANSWER.upper())-65)
+        points.append("{}/{}".format(POINTS, questions_amount))
+        ABCD = 65
     print(
         "Twój wynik: {}/{} - {}%".format(
             POINTS, questions_amount, round((POINTS / questions_amount) * 100, 2)
         )
-    )
+        )
     saving_points_to_file(points, 10)
 
 

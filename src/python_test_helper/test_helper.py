@@ -18,8 +18,8 @@ from test_modules import (
 QUESTIONS = []
 ANSWERS = []
 CORRECT_ANSWERS = []
-# reading_from_file(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
-adding_new_questions(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
-# saving_into_file(QUESTIONS, ANSWERS, CORRECT_ANSWERS)
-# quiz_game(1, QUESTIONS, ANSWERS, CORRECT_ANSWERS)
+reading_from_file(QUESTIONS, ANSWERS)
+# adding_new_questions(QUESTIONS, ANSWERS)
+# saving_into_file(QUESTIONS, ANSWERS)
+quiz_game(2, QUESTIONS, ANSWERS)
 # create_new_test("questionss.json")
