@@ -1,6 +1,7 @@
 """Dummy docstring"""
 import click
-from .test_modules import quiz_game
+from .test_modules import (quiz_game,
+create_new_test, adding_new_questions)
 
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
@@ -15,7 +16,9 @@ def cli():
 @click.option('--path', default='path')
 def create_test(path):
     """dummy doc"""
-    print(path)
+    new_questions = []
+    new_answers = []
+    create_new_test(new_questions, new_answers, path)
 
 
 @cli.command()

@@ -33,7 +33,7 @@ def checking_answers(answers: list, correct_answers: list):
         return False
 
 
-def saving_into_file(questions: list, answers: list):
+def saving_into_file(questions: list, answers: list, path: str):
     """Save elements from 3 given lists into file with ';' suffix after values
     Args:
     questions: list of questions
@@ -41,7 +41,7 @@ def saving_into_file(questions: list, answers: list):
     correct_answers: list of correct answers associated with questions
     """
     dump_list = []
-    with open("questions.json", "w") as f:
+    with open(path, "w") as f:
         for itr, i in enumerate(questions):
             dump_dict = {
                 'question': i,
@@ -51,7 +51,7 @@ def saving_into_file(questions: list, answers: list):
         json.dump(dump_list, f, indent=2)
 
 
-def reading_from_file(questions: list, answers: list):
+def reading_from_file(questions: list, answers: list, path: str):
     """Reading elements from file 'questions.txt'
 
     Args:
@@ -60,7 +60,7 @@ def reading_from_file(questions: list, answers: list):
         correct_answers (list): correct answers list
     """
     try:
-        with open("questions.json", "r") as f:
+        with open(path, "r") as f:
             questions_data = json.load(f)
 
     except IOError:
@@ -248,8 +248,13 @@ def quiz_game(questions_amount: int, QUESTIONS: list, ANSWERS: list):
     saving_points_to_file(points, 10)
 
 
-def create_new_test(path: str):
+def create_new_test(questions: list, answers: list, path: str):
     if os.path.exists(path) == True:
         print('istnieje')
+        reading_from_file(questions, answers, path)
+        adding_new_questions(questions, answers)
+        saving_into_file(questions, answers, path)
     else:
         print('nie istnieje')
+        adding_new_questions(questions, answers)
+        saving_into_file(questions, answers, path)
