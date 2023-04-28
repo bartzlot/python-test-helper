@@ -29,18 +29,16 @@ repos:
     rev: v0.12.0
     hooks:
       - id: markdownlint
-  - repo: https://github.com/psf/black
-    rev: '23.1.0'
-    hooks:
-      - id: black
   - repo: https://github.com/PyCQA/bandit
     rev: '1.7.4'
     hooks:
       - id: bandit
+        args: ["-ll"]
   - repo: https://github.com/PyCQA/flake8
     rev: '6.0.0'
     hooks:
       - id: flake8
+        args: ["--max-line-length=120"]
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.0.0
     hooks:
@@ -53,8 +51,14 @@ repos:
     rev: v2.16.2
     hooks:
       - id: pylint
+        args: ["--disable=E0401", "--max-line-length=120"]
   - repo: https://github.com/pycqa/isort
     rev: '5.12.0'
     hooks:
       - id: isort
-        args: ["--profile", "black", "--filter-files"]
+  - repo: https://github.com/google/yapf
+    rev: v0.32.0
+    hooks:
+      - id: yapf
+        args: ["--style={based_on_style: google, column_limit: 120, indent_width: 4}"]
+        additional_dependencies: [toml]
