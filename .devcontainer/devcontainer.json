@@ -10,7 +10,6 @@
         "vscode": {
             "extensions": [
                 "donjayamanne.python-extension-pack",
-                "streetsidesoftware.code-spell-checker",
                 "eamodio.gitlens",
                 "yzhang.markdown-all-in-one",
                 "davidanson.vscode-markdownlint",
@@ -22,12 +21,23 @@
                 "python.linting.enabled": true,
                 "python.linting.banditEnabled": true,
                 "python.linting.flake8Enabled": true,
+                "python.linting.flake8Args": [
+                    "--max-line-length=120"
+                ],
                 "python.linting.mypyEnabled": true,
                 "python.linting.pycodestyleEnabled": true,
                 "python.linting.pydocstyleEnabled": true,
+                "python.linting.pycodestyleArgs": [
+                    "--max-line-length=120"
+                ],
                 "python.linting.pylintEnabled": true,
+                "python.linting.pylintArgs": [
+                    "--max-line-length=120"
+                ],
                 "python.formatting.provider": "yapf",
-                "python.formatting.yapfArgs": ["--style={based_on_style: google}"]
+                "python.formatting.yapfArgs": [
+                    "--style={based_on_style: google, column_limit: 120, indent_width: 4}"
+                ]
             }
         }
     },

@@ -1,36 +1,40 @@
-[
-  {
-    "question": "czy jureczko?",
-    "answers": [
+{
+  "title": "My first test",
+  "description": "This is my first generated test",
+  "questions": [
       {
-        "answer": "tak",
-        "state": true
+          "question": "Test question 1",
+          "answers": [
+              {
+                  "answer": "Bla Bla Bla...",
+                  "is_correct": true
+              },
+              {
+                  "answer": "Dupa dupa dupa",
+                  "is_correct": false
+              },
+              {
+                  "answer": "WTF",
+                  "is_correct": false
+              }
+          ]
       },
       {
-        "answer": "nie",
-        "state": false
-      },
-      {
-        "answer": "moze nie",
-        "state": false
+          "question": "Test question 2",
+          "answers": [
+              {
+                  "answer": "Bla Bla Bla... 2",
+                  "is_correct": false
+              },
+              {
+                  "answer": "Dupa dupa dupa 2",
+                  "is_correct": true
+              },
+              {
+                  "answer": "WTF 2",
+                  "is_correct": true
+              }
+          ]
       }
-    ]
-  },
-  {
-    "question": "czy to jest wyklad?",
-    "answers": [
-      {
-        "answer": "moze",
-        "state": false
-      },
-      {
-        "answer": "tak",
-        "state": true
-      },
-      {
-        "answer": "nie",
-        "state": false
-      }
-    ]
-  }
-]
+  ]
+}

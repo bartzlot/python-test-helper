@@ -33,44 +33,24 @@ def checking_answers(answers: list, correct_answers: list):
         return False
 
 
-def saving_into_file(questions: list, answers: list, path: str):
+def saving_into_file(test: dict, path: str):
     """Save elements from 3 given lists into file with ';' suffix after values
     Args:
     questions: list of questions
     answers: list of answers
     correct_answers: list of correct answers associated with questions
     """
-    dump_list = []
-    with open(path, "w") as f:
-        for itr, i in enumerate(questions):
-            dump_dict = {
-                'question': i,
-                'answers': answers[itr],
-            }
-            dump_list.append(dump_dict)
-        json.dump(dump_list, f, indent=2)
+    with open(path, "w", encoding="utf-8") as file:
+        json.dump(test, file)
 
 
-def reading_from_file(questions: list, answers: list, path: str):
-    """Reading elements from file 'questions.txt'
-
-    Args:
-        questions (list): questions list
-        answers (list): answers list
-        correct_answers (list): correct answers list
-    """
+def reading_from_file(path: str):
     try:
-        with open(path, "r") as f:
-            questions_data = json.load(f)
+        with open(path, "r", encoding="utf-8") as file:
+            return json.load(file)
 
     except IOError:
-        print(
-            "Nie mozna otworzyć pliku, sprawdź czy znajduje się w odpowiedniej ściezce..."
-        )
-    try:
-        for i in questions_data:
-            questions.append(i['question'])
-            answers.append(i['answers'])
+        print("Nie mozna otworzyć pliku, sprawdź czy znajduje się w odpowiedniej ściezce...")
     except EOFError:
         print("Plik jest pusty, nie mozna odczytać pytań...")
     except IndexError:
@@ -79,61 +59,56 @@ def reading_from_file(questions: list, answers: list, path: str):
         print("[pytanie] ;[odp1] ;[odp2];[odp3] ;[odp-N] ;[poprawna odp]")
 
 
-def define_correctness(is_correct: bool):
+def define_correctness():
     """dummy doc"""
     while True:
-            c = str(input("Czy odpowiedź jest poprawna[T/N]: "))
-            if c.upper() == 'T':
-                return True
-            elif c.upper() == 'N':
-                return False
-            else:
-                print('Musisz wskazać poprawność odpowiedzi...')
-                continue
+        is_correct_input = str(input("Czy odpowiedź jest poprawna[T/N]: "))
+
+        if is_correct_input.upper() == 'T':
+            return True
+
+        if is_correct_input.upper() == 'N':
+            return False
+
+        print('Musisz wskazać poprawność odpowiedzi...')
+        continue
 
 
-def adding_new_questions(questions: list, answers: list):
-    """Function adding new questions from user while whole program is running
+def adding_new_questions():
+    """Function adding new questions from user while whole program is running"""
+    questions = []
 
-    Args:
-        questions (list): list of questions
-        answers (list): list of answers with correctness state
-    """
     while True:
         question = str(input("Podaj pytanie jakie chcesz dodać lub wpisz [N], aby zakończyć wprowadzanie: "))
+
         if question.upper() == "N":
             break
-        elif question == "" or question.isnumeric() is True:
+
+        if question == "" or question.isnumeric() is True:
             print("Musisz podać pytanie...\n")
             continue
-        else:
-            break
-    temp_answers = []
-    itr = 1
-    # options = []
-    while True:
-        single_answer = str(
-            input(
-                "Podaj {} odpowiedź lub wpisz [N], aby zakończyć dodawanie: ".format(
-                    itr
-                )
-            )
-        )
-        if single_answer == "":
-            print("Musisz wymyślić jakąś odpowiedź...")
-            continue
-        elif single_answer.upper() == "N":
-            break
-        else:
-            itr += 1
-            packed_answer = {}
-            is_correct = None
-            is_correct = define_correctness(is_correct)
-            packed_answer = dict(answer=single_answer, state=is_correct)
+
+        temp_answers = []
+        itr = 1
+
+        while True:
+            single_answer = str(input(f'Podaj {itr} odpowiedź lub wpisz [N], aby zakończyć dodawanie: '))
+
+            if single_answer == "":
+                print("Musisz wymyślić jakąś odpowiedź...")
+                continue
+
+            if single_answer.upper() == "N":
+                break
+
+            packed_answer = {'answer': single_answer, 'is_correct': define_correctness()}
             temp_answers.append(packed_answer)
-    questions.append(question)
-    answers.append(temp_answers)
-    print(answers)
+            itr += 1
+
+        questions.append({'question': question, 'answers': temp_answers})
+
+    return questions
+
 
 def saving_points_to_file(points: list, records_amount: int):
     with open("points.txt", "w") as f:
@@ -147,9 +122,7 @@ def reading_points_from_file(points: list, records_amount: int):
     try:
         f = open("points.txt", "r")
     except IOError:
-        print(
-            "Nie mozna otworzyć pliku, sprawdź czy znajduje się w odpowiedniej ściezce..."
-        )
+        print("Nie mozna otworzyć pliku, sprawdź czy znajduje się w odpowiedniej ściezce...")
     try:
         for line in f:
             points.append(line.strip())
@@ -222,39 +195,49 @@ def quiz_game(questions_amount: int, QUESTIONS: list, ANSWERS: list):
         ITR += 1
         ALREADY_ANSWERED = []
         while True:
-            ANSWER = str(input("Podaj odpowiedź, jezeli wszystkie odpowiedzi zostaly wprowadzone lub chcesz przerwać quiz wpisz [N]: "))
+            ANSWER = str(
+                input(
+                    "Podaj odpowiedź, jezeli wszystkie odpowiedzi zostaly wprowadzone lub chcesz przerwać quiz wpisz [N]: "
+                ))
             if ANSWER == '' or len(ANSWER) > 1 or (ANSWER.upper() in ALREADY_ANSWERED):
                 print("Musisz podać odpowiedź w poprawnym formacie i nie powtarzać odpowiedzi...")
             elif ANSWER.upper() == 'N':
-                if checking_answers(ALREADY_ANSWERED, picked_answers[ITR-1]) is True:
+                if checking_answers(ALREADY_ANSWERED, picked_answers[ITR - 1]) is True:
                     POINTS += 1
                     break
                 else:
                     break
-            elif len(ALREADY_ANSWERED) == ABCD-65:
+            elif len(ALREADY_ANSWERED) == ABCD - 65:
                 print("Podałeś juz wszystkie odpowiedzi...")
                 break
-            elif ord(ANSWER.upper()) > (ABCD-1):
-                print("Podaj odpowiedź z zakresu A - {}".format(chr(ABCD-1)))
+            elif ord(ANSWER.upper()) > (ABCD - 1):
+                print("Podaj odpowiedź z zakresu A - {}".format(chr(ABCD - 1)))
             else:
-                ALREADY_ANSWERED.append(ord(ANSWER.upper())-65)
+                ALREADY_ANSWERED.append(ord(ANSWER.upper()) - 65)
         points.append("{}/{}".format(POINTS, questions_amount))
         ABCD = 65
-    print(
-        "Twój wynik: {}/{} - {}%".format(
-            POINTS, questions_amount, round((POINTS / questions_amount) * 100, 2)
-        )
-        )
+    print("Twój wynik: {}/{} - {}%".format(POINTS, questions_amount, round((POINTS / questions_amount) * 100, 2)))
     saving_points_to_file(points, 10)
 
 
-def create_new_test(questions: list, answers: list, path: str):
-    if os.path.exists(path) == True:
-        print('istnieje')
-        reading_from_file(questions, answers, path)
-        adding_new_questions(questions, answers)
-        saving_into_file(questions, answers, path)
+def create_new_test(path: str):
+    if os.path.exists(path):
+        test = reading_from_file(path)
     else:
-        print('nie istnieje')
-        adding_new_questions(questions, answers)
-        saving_into_file(questions, answers, path)
+        test = get_test_info()
+
+    test["questions"] += adding_new_questions()
+    saving_into_file(test, path)
+
+
+def get_test_info():
+    """Get basic test information
+
+    Returns:
+        _type_: _description_
+    """
+    return {
+        'title': "FIX ME",
+        'description': "FIX ME",
+        'questions': []
+    }

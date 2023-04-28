@@ -1,7 +1,9 @@
-"""Dummy docstring"""
+"""Dummy docstring."""
 import click
-from .test_modules import (quiz_game,
-create_new_test, adding_new_questions)
+from .test_modules import (
+    quiz_game,
+    create_new_test
+    )
 
 
 CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
@@ -9,16 +11,14 @@ CONTEXT_SETTINGS = dict(help_option_names=["-h", "--help"])
 
 @click.group(context_settings=CONTEXT_SETTINGS)
 def cli():
-    """dummy doc"""
+    """Fix dummy doc."""
 
 
 @cli.command()
-@click.option('--path', default='path')
+@click.argument('path', type=click.Path(dir_okay=False, writable=True, readable=True))
 def create_test(path):
-    """dummy doc"""
-    new_questions = []
-    new_answers = []
-    create_new_test(new_questions, new_answers, path)
+    """Fix dummy doc."""
+    create_new_test(path)
 
 
 @cli.command()
